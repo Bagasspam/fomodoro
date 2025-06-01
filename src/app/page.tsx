@@ -12,13 +12,15 @@ const PomodoroTimer: React.FC = () => {
   const [isBreak, setIsBreak] = useState<boolean>(false);
   const [showSettings, setShowSettings] = useState<boolean>(false);
 
-  // Use useRef to store audio instance
-  const alarmSoundRef = useRef<HTMLAudioElement | null>(null);
+  // Use useRef to store audio instances
+  const pomodoroAlarmRef = useRef<HTMLAudioElement | null>(null);
+  const breakAlarmRef = useRef<HTMLAudioElement | null>(null);
 
   // Initialize audio on client side
   useEffect(() => {
     if (typeof window !== "undefined") {
-      alarmSoundRef.current = new Audio("/hidupjokowi.mp3");
+      pomodoroAlarmRef.current = new Audio("/wiwokdetok.mp3"); // Alarm untuk pomodoro selesai
+      breakAlarmRef.current = new Audio("/hidupjokowi.mp3"); // Alarm untuk break selesai
     }
   }, []);
 
@@ -74,26 +76,31 @@ const PomodoroTimer: React.FC = () => {
   }, [minutes, seconds]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: NodeJS.Timeout | undefined;
+
     if (isActive) {
       interval = setInterval(() => {
         if (seconds === 0) {
           if (minutes === 0) {
-            // Play sound notification when the timer finishes
-            if (alarmSoundRef.current) {
-              alarmSoundRef.current.play().catch(console.error);
-            }
-            setIsActive(false); // Stop the timer when Pomodoro ends
-
+            // Play different sound based on current mode
             if (isBreak) {
+              // Break selesai, putar alarm break selesai
+              if (breakAlarmRef.current) {
+                breakAlarmRef.current.play().catch(console.error);
+              }
               // Break selesai, kembali ke Pomodoro
               setIsBreak(false);
               setMinutes(customDuration);
             } else {
+              // Pomodoro selesai, putar alarm pomodoro selesai
+              if (pomodoroAlarmRef.current) {
+                pomodoroAlarmRef.current.play().catch(console.error);
+              }
               // Pomodoro selesai, mulai Break
               setIsBreak(true);
               setMinutes(customBreakDuration);
             }
+            setIsActive(false); // Stop the timer
             setSeconds(0);
           } else {
             setMinutes(minutes - 1); // Decrease the minutes
@@ -103,10 +110,13 @@ const PomodoroTimer: React.FC = () => {
           setSeconds(seconds - 1); // Decrease the seconds
         }
       }, 1000);
-    } else if (!isActive && seconds !== 0) {
-      clearInterval(interval); // Clear interval when timer is paused
     }
-    return () => clearInterval(interval); // Clean up the interval on unmount
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [
     isActive,
     minutes,
