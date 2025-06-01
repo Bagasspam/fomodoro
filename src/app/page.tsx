@@ -140,40 +140,40 @@ const PomodoroTimer: React.FC = () => {
   ];
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900">
-      <div className="bg-gray-800 text-center flex flex-col items-center justify-center bg-gray-100 rounded-lg shadow-md w-100 md:w-1/3 py-20 mx-auto relative">
+    <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4">
+      <div className="bg-gray-800 text-center flex flex-col items-center justify-center bg-gray-100 rounded-lg shadow-md w-full max-w-md md:max-w-lg lg:max-w-xl py-8 md:py-20 mx-auto relative">
         {/* Settings button positioned at top right corner */}
         <button
           onClick={() => setShowSettings(!showSettings)}
-          className="absolute top-4 right-4 text-white hover:text-orange-400 transition-colors"
+          className="absolute top-3 right-3 md:top-4 md:right-4 text-white hover:text-orange-400 transition-colors"
         >
           <FaCog
             className="text-gray-200 hover:cursor-pointer hover:text-gray-300 hover:rotate-30 transition-transform duration-300 ease-in-out"
-            size={35}
+            size={window.innerWidth < 768 ? 28 : 35}
           />
         </button>
 
         {/* Centered title */}
-        <div className="mb-4">
-          <h1 className="text-5xl font-bold text-orange-500">
+        <div className="mb-4 md:mb-6">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-orange-500">
             {isBreak ? "Break Time" : "Fomodoro"}
           </h1>
         </div>
 
         {/* Settings Panel */}
         {showSettings && (
-          <div className="bg-gray-700 p-4 rounded-lg mb-4 w-5/6 mx-auto">
-            <h3 className="text-white text-lg mb-3">
+          <div className="bg-gray-700 p-3 md:p-4 rounded-lg mb-4 w-11/12 md:w-5/6 mx-auto">
+            <h3 className="text-white text-base md:text-lg mb-3">
               Choose your Fomodoro style
             </h3>
-            <div className="flex gap-2 justify-center mb-3">
+            <div className="flex flex-col sm:flex-row gap-2 justify-center mb-3">
               {presetConfigs.map((config) => (
                 <button
                   key={`${config.pomodoro}-${config.break}`}
                   onClick={() =>
                     handleDurationChange(config.pomodoro, config.break)
                   }
-                  className={`px-3 py-2 rounded hover:cursor-pointer ${
+                  className={`px-3 py-2 rounded hover:cursor-pointer text-sm md:text-base ${
                     customDuration === config.pomodoro &&
                     customBreakDuration === config.break
                       ? "bg-orange-600 text-white"
@@ -189,9 +189,10 @@ const PomodoroTimer: React.FC = () => {
 
         <div className="relative flex justify-center items-center">
           <svg
-            width="500"
-            height="300"
+            width="100%"
+            height="auto"
             viewBox="0 0 300 200"
+            className="w-80 h-48 md:w-96 md:h-60 lg:w-[500px] lg:h-[300px]"
             xmlns="http://www.w3.org/2000/svg"
           >
             {/* Background arc */}
@@ -199,7 +200,8 @@ const PomodoroTimer: React.FC = () => {
               d="M 50 150 A 100 100 0 0 1 250 150"
               fill="none"
               stroke="#101828"
-              strokeWidth="25"
+              strokeWidth="20"
+              className="md:stroke-[25]"
             />
 
             {/* Progress arc (Pomodoro or Break) */}
@@ -207,7 +209,8 @@ const PomodoroTimer: React.FC = () => {
               d="M 50 150 A 100 100 0 0 1 250 150"
               fill="none"
               stroke={isBreak ? "#4CAF50" : "#FF6900"}
-              strokeWidth="25"
+              strokeWidth="20"
+              className="md:stroke-[25]"
               strokeDasharray={strokeDasharray()}
               strokeDashoffset={(1 - progress / 100) * strokeDasharray()} // Progress dari full ke 0
               style={{ transition: "stroke-dashoffset 1s ease" }}
@@ -216,7 +219,7 @@ const PomodoroTimer: React.FC = () => {
 
           {/* Time in the center of the progress bar */}
           <div
-            className="absolute text-5xl font-bold text-white"
+            className="absolute text-3xl md:text-4xl lg:text-5xl font-bold text-white"
             style={{
               top: "58%",
               left: "50%",
@@ -227,22 +230,22 @@ const PomodoroTimer: React.FC = () => {
             <span>{String(minutes).padStart(2, "0")}:</span>
             <span>{String(seconds).padStart(2, "0")}</span>
 
-            <p className="text-xl mt-2">
+            <p className="text-sm md:text-lg lg:text-xl mt-2">
               {isBreak ? "Take a Break" : "Just Focus"}
             </p>
           </div>
         </div>
 
-        <div className="flex justify-center gap-4 mt-6">
+        <div className="flex justify-center gap-3 md:gap-4 mt-4 md:mt-6 w-full px-4">
           <button
             onClick={toggleTimer}
-            className="px-8 py-3 bg-orange-600 text-white rounded-md hover:bg-orange-500 hover:scale-105 transition-transform duration-200 hover:cursor-pointer"
+            className="flex-1 max-w-32 md:max-w-none md:flex-none px-6 md:px-8 py-2 md:py-3 bg-orange-600 text-white rounded-md hover:bg-orange-500 hover:scale-105 transition-transform duration-200 hover:cursor-pointer text-sm md:text-base"
           >
             {isActive ? <FaPause /> : <FaPlay />}
           </button>
           <button
             onClick={resetTimer}
-            className="px-8 py-3 bg-gray-600 text-white rounded-md hover:bg-gray-500 hover:scale-105 transition-transform duration-200 hover:cursor-pointer"
+            className="flex-1 max-w-32 md:max-w-none md:flex-none px-6 md:px-8 py-2 md:py-3 bg-gray-600 text-white rounded-md hover:bg-gray-500 hover:scale-105 transition-transform duration-200 hover:cursor-pointer text-sm md:text-base"
           >
             <FaRedo />
           </button>
